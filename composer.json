@@ -1,0 +1,46 @@
+{
+  "name": "khairy/laravel-sse-stream",
+  "description": "Laravel package to provide Server Sent Events functionality for your app.",
+  "license": "MIT",
+  "type": "library",
+  "keywords": [
+    "Laravel",
+    "SSE",
+    "Sever Sent Events",
+    "Server",
+    "Event",
+    "Realtime",
+    "Polling",
+    "Notifications"
+  ],
+  "require": {
+    "php": "^7.0|^8.0|^8.1|^8.2|^8.3",
+    "illuminate/support": "~5|~6|~7|~8|~9|~10|~11"
+  },
+  "autoload": {
+    "psr-4": {
+      "Khairy\\LaravelSSEStream\\": "src/"
+    },
+    "files": [
+      "src/Helpers/helper.php"
+    ]
+  },
+  "authors": [
+    {
+      "name": "mohamed khairy",
+      "email": "mohamed.khairy.eg@gmail.com"
+    }
+  ],
+  "homepage": "https://github.com/mohamd-khairy/laravel-sse-stream",
+  "extra": {
+    "laravel": {
+      "providers": [
+        "Khairy\\LaravelSSEStream\\SSEServiceProvider"
+      ],
+      "aliases": {
+        "SSE": "Khairy\\LaravelSSEStream\\Facades\\SSEFacade"
+      }
+    }
+  },
+  "minimum-stability": "stable"
+}
