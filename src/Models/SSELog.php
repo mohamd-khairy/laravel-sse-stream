@@ -44,7 +44,10 @@ class SSELog extends Model
     public function scopeAuthenticated($query)
     {
         if (auth()->check()) {
-            $query->where('user_id', auth()->user()->id);
+            $query->where(function ($q) {
+                $q->where('user_id', auth()->id())
+                    ->orWhereNull('user_id');
+            });
         } else {
             $query->whereNull('user_id');
         }

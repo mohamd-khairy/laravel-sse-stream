@@ -45,54 +45,58 @@ class SSEController extends Controller
                 return;
             }
 
-            $model = $SSELog->notDelivered()->authenticated()->oldest()->first();
+            $models = $SSELog->notDelivered()->authenticated()->oldest()->get();
 
             echo ':' . str_repeat(' ', 1048) . "\n"; // 2 kB padding for IE
             echo "retry: 5000\n";
 
-            if (!$model) {
-                // no new data to send
-                echo ": heartbeat\n\n";
-            } else {
-
-                $clientId = $this->getClientId();
-
-                // check if we have notified this client
-                $clientModel = $SSELog
-                    ->where('message', $model->message)
-                    ->where('client', $clientId)
-                    ->first();
-
-                if ($clientModel) {
+            foreach ($models as $model) {
+                if (!$model) {
                     // no new data to send
                     echo ": heartbeat\n\n";
                 } else {
 
-                    $data = json_encode([
-                        'message' => $model->message,
-                        'type' => strtolower($model->type),
-                        'time' => date('H:i:s A', strtotime($model->created_at)),
-                    ]);
+                    $clientId = $this->getClientId();
 
-                    echo 'id: ' . $model->id . "\n";
-                    echo 'event: ' . $model->event . "\n";
-                    echo 'data: ' . $data . "\n\n";
+                    // check if we have notified this client
+                    $clientModel = $SSELog
+                        ->where('message', $model->message)
+                        ->where('client', $clientId)
+                        ->first();
 
-                    $SSELog->create([
-                        'user_id' => $model->user_id,
-                        'message' => $model->message,
-                        'event' => $model->event,
-                        'type' => $model->type,
-                        'client' => $clientId,
-                        'delivered' => '1'
-                    ]);
+                    if ($clientModel) {
+                        // no new data to send
+                        echo ": heartbeat\n\n";
+                    } else {
+
+                        $data = json_encode([
+                            'message' => $model->message,
+                            'type' => strtolower($model->type),
+                            'time' => date('H:i:s A', strtotime($model->created_at)),
+                        ]);
+
+                        echo 'id: ' . $model->id . "\n";
+                        echo 'event: ' . $model->event . "\n";
+                        echo 'data: ' . $data . "\n\n";
+
+                        // $model->update(['delivered' => '1']);
+
+                        $SSELog->create([
+                            'user_id' => $model->user_id,
+                            'message' => $model->message,
+                            'event' => $model->event,
+                            'type' => $model->type,
+                            'client' => $clientId,
+                            'delivered' => '1'
+                        ]);
+                    }
                 }
+
+                ob_flush();
+                flush();
+
+                sleep(config('sse.interval'));
             }
-
-            ob_flush();
-            flush();
-
-            sleep(config('sse.interval'));
         });
 
         return $response->send();
@@ -115,12 +119,11 @@ class SSEController extends Controller
     public function deleteOld()
     {
         $date = new DateTime;
-        $date->modify('-' . (config('sse.interval') * 3) . ' seconds');
+        $date->modify('-' . (config('sse.interval') * 5) . ' seconds');
 
         // delete client-specific records
         if (!config('sse.keep_events_logs')) {
-            SSELog::where('created_at', '<=', $date->format('Y-m-d H:i:s'))->where('delivered', '1')
-                ->whereNull('client')->delete();
+            SSELog::where('created_at', '<=', $date->format('Y-m-d H:i:s'))->where('delivered', '1')->whereNull('client')->delete();
         }
 
         if (!config('sse.keep_delivered_logs')) {
