@@ -9,7 +9,7 @@ Laravel package to provide Server Sent Events functionality for your app. You ca
 
  - PHP >= 8
  - Laravel 11
-
+s
 ## Installation
 
 Via Composer
