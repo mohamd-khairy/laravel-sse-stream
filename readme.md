@@ -90,7 +90,7 @@ SSEFacade::notify($message, $type = 'notification', $event = 'message')
 Notice `$event = 'message'`. You can customize this, let's say you want to use `login` as SSE event type:
 
 ```php
-use Sarfraznawaz2005\SSE\Facades\SSEFacade;
+use Khairy\LaravelSSEStream\Facades\SSEFacade;
 
 public function myMethod()
 {
