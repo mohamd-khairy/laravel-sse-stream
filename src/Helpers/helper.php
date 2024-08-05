@@ -11,8 +11,6 @@ if (!function_exists('sse_notify')) {
      */
     function sse_notify($message = null, $type = 'notification', $event = 'message', $user_ids = null)
     {
-        $noty = app('SSE');
-
-        return $noty->notify(message: $message, type: $type, event: $event, user_ids: $user_ids);
+        return app('SSE')->notify(message: $message, type: $type, event: $event, user_ids: $user_ids);
     }
 }

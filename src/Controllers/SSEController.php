@@ -119,7 +119,7 @@ class SSEController extends Controller
     public function deleteOld()
     {
         $date = new DateTime;
-        $date->modify('-' . (config('sse.interval') * 5) . ' seconds');
+        $date->modify('-' . (config('sse.interval') * 4) . ' seconds');
 
         // delete client-specific records
         if (!config('sse.keep_events_logs')) {
