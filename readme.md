@@ -103,6 +103,7 @@ public function myMethod()
 
 Then you need to handle this in your view yourself like this:
 
+ # javascript
 ```javascript
 <script>
 var es = new EventSource("{{route('__sse_stream__')}}");
@@ -115,7 +116,7 @@ es.addEventListener("UserLoggedIn", function (e) {
 </script>
 ```
 
-
+ # vuejs
 ```vuejs
 <template>
   <div>
