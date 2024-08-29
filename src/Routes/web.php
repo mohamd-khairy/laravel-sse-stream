@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(
     [
         'namespace' => 'Khairy\LaravelSSEStream\Controllers',
-        'prefix' => 'sse'
+        'prefix' => config('sse.prefix', 'sse')
     ],
     static function () {
 
