@@ -115,6 +115,70 @@ es.addEventListener("UserLoggedIn", function (e) {
 </script>
 ```
 
+
+```vuejs
+<template>
+  <div>
+    <h1>Server-Sent Events in Vue.js</h1>
+    <ul>
+      <li v-for="message in messages" :key="message.id">{{ message.data }}</li>
+    </ul>
+  </div>
+</template>
+
+<script>
+export default {
+  data() {
+    return {
+      eventSource: null, // To hold the EventSource instance
+      messages: [] // To hold the received messages
+    };
+  },
+  mounted() {
+    this.startSSE();
+  },
+  beforeDestroy() {
+    this.stopSSE();
+  },
+  methods: {
+    startSSE() {
+      this.eventSource = new EventSource('/sse/sse_stream');
+
+      this.eventSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        this.messages.push(data);
+      };
+
+      this.eventSource.addEventListener('reconnect', (event) => {
+        console.log('Reconnecting SSE...');
+        this.stopSSE();
+        setTimeout(this.startSSE, 1000); // Reconnect after 1 second
+      });
+
+      this.eventSource.onerror = (event) => {
+        if (this.eventSource.readyState === EventSource.CLOSED) {
+          console.error('SSE connection was closed.');
+        } else {
+          console.error('SSE encountered an error:', event);
+        }
+      };
+    },
+    stopSSE() {
+      if (this.eventSource) {
+        this.eventSource.close();
+        this.eventSource = null;
+      }
+    }
+  }
+};
+</script>
+
+<style>
+/* Add any necessary styles here */
+</style>
+
+```
+
 ## Credits
 
 - [Mohamed Khairy][link-author]
