@@ -20,6 +20,9 @@ return [
     // keep events log in database by deleiverd is true
     'keep_delivered_logs' => env('SSE_KEEP_DELIVERED_LOGS', false),
 
+    // for cors origin
+    'Access-Control-Allow-Origin' => 'http://localhost:3000',
+
     // notification settings
     'position' => 'bottomLeft', // top, topLeft, topCenter, topRight, center, centerLeft, centerRight, bottom, bottomLeft, bottomCenter, bottomRight
 

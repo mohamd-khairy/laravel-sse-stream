@@ -19,6 +19,25 @@ class SSEController extends Controller
             $this->middleware(config('sse.middleware_type', 'web'));
         }
     }
+
+    /**
+     * Summary of headers
+     * @param mixed $response
+     * @return void
+     */
+    protected function headers($response): void
+    {
+        $response->headers->set('Content-Type', 'text/event-stream');
+        $response->headers->set('Cache-Control', 'no-cache');
+        $response->headers->set('Connection', 'keep-alive');
+        $response->headers->set('X-Accel-Buffering', 'no');
+
+        $response->headers->set('Access-Control-Allow-Origin', config('sse.Access-Control-Allow-Origin')); // Adjust this to your frontend origin
+        $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+        $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+        $response->headers->set('Access-Control-Allow-Credentials', 'true');
+    }
+
     /**
      * Notifies SSE events.
      *
@@ -30,10 +49,7 @@ class SSEController extends Controller
     {
         $response = new StreamedResponse();
 
-        $response->headers->set('Content-Type', 'text/event-stream');
-        $response->headers->set('Cache-Control', 'no-cache');
-        $response->headers->set('Connection', 'keep-alive');
-        $response->headers->set('X-Accel-Buffering', 'no');
+        $this->headers($response);
 
         // delete expired/old
         $this->deleteOld();
